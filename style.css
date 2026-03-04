@@ -34,6 +34,13 @@ body {
   line-height: 1.6;
 }
 
+/* ACCESSIBILITY — focus states for keyboard navigation */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 /* GENERAL LAYOUT */
 
 .container {
@@ -101,11 +108,11 @@ body {
 @keyframes section-pop {
   from {
     opacity: 0;
-    transform: translateY(40px) scale(0.97);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -115,13 +122,23 @@ body {
   .hero > .container,
   .section > .container {
     opacity: 0;
-    transform: translateY(40px) scale(0.97);
+    transform: translateY(40px);
     animation-name: section-pop;
     animation-duration: 0.75s;
     animation-timing-function: cubic-bezier(0.18, 0.8, 0.25, 1);
     animation-fill-mode: forwards;
     animation-timeline: view();
     animation-range: entry 10% cover 45%;
+  }
+}
+
+/* fallback for browsers that don't support scroll-timeline (Firefox, Safari) */
+
+@supports not (animation-timeline: view()) {
+  .hero > .container,
+  .section > .container {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -195,10 +212,13 @@ body {
   text-decoration: none;
   color: rgba(255, 255, 255, 0.7);
   padding: 0.35rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .main-nav a:hover {
   color: #ffffff;
+  border-bottom-color: var(--accent);
 }
 
 .header-cta {
@@ -427,10 +447,11 @@ body {
   text-decoration: none;
 }
 
+/* fixed: was nearly invisible with white border on light bg */
 .chip-text {
   background: #fff5ee;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  color: #fce1d0;
+  border: 1px solid var(--border);
+  color: var(--accent-deep);
 }
 
 /* MENU */
@@ -595,6 +616,7 @@ body {
 .booking-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start; /* fixed: buttons no longer stretch full-width unnecessarily */
   gap: 0.8rem;
   margin-top: 1.2rem;
 }
@@ -631,6 +653,26 @@ body {
   font-size: 0.85rem;
   text-decoration: none;
   color: var(--accent);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.reviews-link:hover {
+  border-bottom-color: var(--accent);
+}
+
+/* footer links */
+
+.footer-nav a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.footer-nav a:hover {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
 /* FOOTER — black highlight bar */
@@ -664,11 +706,6 @@ body {
   margin-bottom: 0.7rem;
 }
 
-.footer-nav a {
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
-}
-
 .footer-social {
   display: flex;
   gap: 0.8rem;
@@ -689,9 +726,13 @@ body {
 
   .hero-inner,
   .two-col,
-  .menu-grid,
   .gallery-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* menu: 2 columns on tablet, easier to scan than 1 */
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-photo {
@@ -760,6 +801,7 @@ body {
     background: rgba(255, 255, 255, 0.06);
     white-space: nowrap;
     font-size: 0.8rem;
+    border-bottom: none; /* pills don't need underline hover on mobile */
   }
 
   .hero,
@@ -783,6 +825,11 @@ body {
     justify-content: center;
   }
 
+  /* let food photos breathe naturally on small screens */
+  .hero-image-card img {
+    aspect-ratio: auto;
+  }
+
   .hero-image-card {
     max-width: 100%;
   }
@@ -793,6 +840,7 @@ body {
     margin-bottom: 1.5rem;
   }
 
+  /* single column on phones */
   .menu-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 1.6rem;
